@@ -2,6 +2,8 @@
 
 Panel de monitoreo de automatizaciones RPA que permite administrar procesos y simular sus ejecuciones. El proyecto muestra un flujo operativo simple, medible y completamente funcional para un portafolio full stack.
 
+[Ver demo en vivo](https://pietroalvarez-flowwatch-demo.onrender.com)
+
 ![Panel principal de FlowWatch](docs/dashboard.jpg)
 
 ## Funcionalidades
@@ -87,6 +89,12 @@ mvn test
 ```
 
 El frontend también se valida con el compilador estricto de Angular y TypeScript.
+
+## Despliegue
+
+El `Dockerfile` compila Angular, lo integra dentro de Spring Boot y genera un único servicio web. `render.yaml` permite desplegarlo en Render y volver a publicarlo automáticamente con cada cambio en `main`.
+
+[![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/PietroAlvarez/FlowWatch)
 
 ## Autor
 

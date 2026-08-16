@@ -4,8 +4,14 @@ import { Automation, AutomationPayload, AutomationRun, Dashboard, RunStatus } fr
 
 @Injectable({ providedIn: 'root' })
 export class ApiService {
-  private readonly baseUrl = 'http://localhost:8082/api';
+  private readonly baseUrl = this.resolveBaseUrl();
   constructor(private readonly http: HttpClient) {}
+
+  private resolveBaseUrl(): string {
+    return window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+      ? 'http://localhost:8082/api'
+      : '/api';
+  }
 
   getDashboard() { return this.http.get<Dashboard>(`${this.baseUrl}/dashboard`); }
   getAutomations() { return this.http.get<Automation[]>(`${this.baseUrl}/automations`); }
