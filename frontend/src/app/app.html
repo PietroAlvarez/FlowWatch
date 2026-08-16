@@ -1,0 +1,72 @@
+<div class="app-shell">
+  <aside class="sidebar">
+    <a class="brand" href="#top"><span>FW</span><strong>FlowWatch</strong></a>
+    <nav><a class="active" href="#overview"><i>⌁</i> Overview</a><a href="#flows"><i>◇</i> Automatizaciones</a><a href="#activity"><i>↯</i> Ejecuciones</a></nav>
+    <div class="stack"><small>STACK</small><p>Java 21</p><p>Spring Boot</p><p>Angular</p><p>PostgreSQL</p></div>
+  </aside>
+
+  <div class="content" id="top">
+    <header>
+      <div><p class="kicker">RPA CONTROL CENTER</p><h1>Automatizaciones bajo control.</h1></div>
+      <span class="live"><i></i> Sistema operativo</span>
+    </header>
+
+    <main id="overview">
+      <section class="metrics">
+        <article><span>Automatizaciones</span><strong>{{ dashboard().automations }}</strong><small>{{ dashboard().active }} activas</small></article>
+        <article><span>Ejecuciones</span><strong>{{ dashboard().executions }}</strong><small>historial demo</small></article>
+        <article class="success"><span>Tasa de éxito</span><strong>{{ dashboard().successRate }}%</strong><small>procesos completados</small></article>
+        <article class="failed"><span>Incidencias</span><strong>{{ dashboard().failed }}</strong><small>requieren revisión</small></article>
+      </section>
+
+      @if (message()) { <button type="button" class="notice" (click)="message.set('')">{{ message() }} ×</button> }
+
+      <section class="flows-section" id="flows">
+        <div class="section-title"><div><p class="kicker">PROCESOS</p><h2>Automatizaciones</h2></div><span>{{ automations().length }} configuradas</span></div>
+        <div class="flow-grid">
+          @for (item of automations(); track item.id) {
+            <article class="flow-card">
+              <div class="flow-top"><span class="flow-icon">{{ item.name.slice(0, 2).toUpperCase() }}</span><span class="state" [class]="'state ' + item.status.toLowerCase()">{{ statusLabel(item.status) }}</span></div>
+              <p class="area">{{ item.area }}</p><h3>{{ item.name }}</h3><p class="description">{{ item.description }}</p>
+              <div class="flow-info"><span><small>Responsable</small>{{ item.owner }}</span><span><small>Programación</small>{{ item.schedule }}</span></div>
+              <div class="flow-actions">
+                <button type="button" class="secondary" (click)="toggle(item)">{{ item.status === 'ACTIVE' ? 'Pausar' : 'Activar' }}</button>
+                <button type="button" [disabled]="item.status !== 'ACTIVE'" (click)="run(item, 'SUCCESS')">▶ Ejecutar</button>
+                <button type="button" class="failure" [disabled]="item.status !== 'ACTIVE'" title="Simular fallo" (click)="run(item, 'FAILED')">!</button>
+              </div>
+            </article>
+          }
+        </div>
+      </section>
+
+      <section class="lower-grid" id="activity">
+        <div class="activity-panel">
+          <div class="section-title compact"><div><p class="kicker">ACTIVIDAD</p><h2>Ejecuciones recientes</h2></div><button type="button" (click)="refresh()">Actualizar</button></div>
+          <div class="run-table">
+            <div class="run-row header-row"><span>Proceso</span><span>Estado</span><span>Registros</span><span>Inicio</span></div>
+            @for (run of runs(); track run.id) {
+              <div class="run-row">
+                <span><strong>{{ run.automationName }}</strong><small>{{ run.message }}</small></span>
+                <span><i class="run-dot" [class]="'run-dot ' + run.status.toLowerCase()"></i>{{ runLabel(run.status) }}</span>
+                <span>{{ run.recordsProcessed }}</span><span>{{ run.startedAt | date:'dd MMM, HH:mm' }}</span>
+              </div>
+            } @empty { <p class="empty">No hay ejecuciones registradas.</p> }
+          </div>
+        </div>
+
+        <aside class="create-panel">
+          <p class="kicker">NUEVO FLUJO</p><h2>Agregar automatización</h2><p>Define un proceso demostrativo para monitorear su ejecución.</p>
+          <form (ngSubmit)="create()">
+            <label>Nombre<input name="name" [(ngModel)]="form.name" placeholder="Ej. Conciliación diaria" required></label>
+            <div class="form-row"><label>Área<input name="area" [(ngModel)]="form.area" placeholder="Finanzas" required></label><label>Responsable<input name="owner" [(ngModel)]="form.owner" placeholder="Nombre ficticio" required></label></div>
+            <label>Programación<input name="schedule" [(ngModel)]="form.schedule" placeholder="Lun–Vie · 09:00" required></label>
+            <label>Descripción<textarea name="description" [(ngModel)]="form.description" rows="3" placeholder="Qué tarea automatiza"></textarea></label>
+            <button class="create-button" type="submit" [disabled]="saving()">{{ saving() ? 'Guardando…' : 'Crear automatización' }}</button>
+          </form>
+        </aside>
+      </section>
+    </main>
+
+    <footer>FlowWatch · Proyecto de portafolio con datos ficticios</footer>
+  </div>
+</div>
